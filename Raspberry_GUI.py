@@ -6,7 +6,13 @@ import time
 import os
 import glob
 import datetime
-from w1thermsensor import W1ThermSensor, SensorNotReadyError, NoSensorFoundError
+#from board import SCL,SDA
+#import busio
+#from adafruit_seesar.seesaw import Seesaw
+
+
+
+##from w1thermsensor import W1ThermSensor, SensorNotReadyError, NoSensorFoundError
 
 root = Tk()
 Variable_Test = "Mira"
@@ -20,6 +26,8 @@ Humidity = None
 TV_Temp = 0
 TV_Humidity = 0
 AV_Temp = None
+#i2c_bus = busio.I2C(SCL,SDA)
+#ss = Seesaw(i2c_bus, addr = 0x36)
 
 content = ttk.Frame(root, padding=(3,3,12,12))
 frame = ttk.Frame(content, borderwidth=5, relief="ridge", width=175, height=300)
@@ -34,45 +42,56 @@ def count():
     global counter
     counter.set(counter.get() + 1)
 
-def poll():
-    global counter
-    Counter = 0
-    for sensor in W1ThermSensor.get_available_sensors():
-        try:
-            Array_ID[Counter] = sensor.id
-        except SensorNotReadyError:
-            Array_ID[Counter] = 8000
-        try:
-            Array_T[Counter] = sensor.get_temperature()
-        except IndexError:
-            Array_T[Counter] = "Null"
+#def Humidity():
+#    Check = i2c_bus.scan()
+#    if not bool(Check):
+#        Humidity_Tk_Var.set("Null")
+#    else:
+#        touch = ss.moisture_read()
+#        Humidity_Tk_Var.set(touch)
+    
+
+
+
+##def poll():
+##    global counter
+##    Counter = 0
+##    for sensor in W1ThermSensor.get_available_sensors():
+#        try:
+#            Array_ID[Counter] = sensor.id
+#        except SensorNotReadyError:
+#            Array_ID[Counter] = 8000
+#        try:
+#            Array_T[Counter] = sensor.get_temperature()
+#        except IndexError:
+#            Array_T[Counter] = "Null"
         
-        Counter = Counter +1
+#        Counter = Counter +1
 
             
             
       
-    Temp1.set(Array_T[0])
-    Temp2.set(Array_T[1])
-    Temp3.set(Array_T[2])
-    root.after(1000,poll)
+#    Temp1.set(Array_T[0])
+#    Temp2.set(Array_T[1])
+#    Temp3.set(Array_T[2])
+#    root.after(1000,poll)
 
-def Average_temperature():
-    Contador = 0
-    Tot_Temp = 0
-    IsANumber = 0
-    Average = 0.0
-    while Contador < 3:
-        if Array_T[Contador] != "Null":
-            Tot_Temp = Tot_Temp + Array_T[Contador]
-            IsANumber = IsANumber + 1
+#def Average_temperature():
+#    Contador = 0
+#    Tot_Temp = 0
+#    IsANumber = 0
+#    Average = 0.0
+#    while Contador < 3:
+#        if Array_T[Contador] != "Null":
+#            Tot_Temp = Tot_Temp + Array_T[Contador]
+#            IsANumber = IsANumber + 1
             
-        Contador = Contador + 1
+#        Contador = Contador + 1
        
-    Average = Tot_Temp/IsANumber
-    strAverage = '{:.3f}'.format(Average)
-    AV_Temp.set(strAverage)
-    root.after(1000,Average_temperature)
+#    Average = Tot_Temp/IsANumber
+#    strAverage = '{:.3f}'.format(Average)
+#    AV_Temp.set(strAverage)
+#    root.after(1000,Average_temperature)
    # AV_Temp.set(Average)
         
     
@@ -92,12 +111,13 @@ def Average_temperature():
 
 ##### /////tk variables
 
-counter = tkinter.DoubleVar()
+#counter = tkinter.DoubleVar()
 Temp1 = tkinter.DoubleVar()
 Temp2 = tkinter.DoubleVar()
 Temp3 = tkinter.DoubleVar()
 AV_Temp = tkinter.StringVar()
-
+Humidity_Tk_Var= tkinter.StringVar()
+AV_Temp.set("0.0")
 
 
 ## Labels ## Add Variables as text = "BLABLA" + var
@@ -147,13 +167,14 @@ frame_2.grid(column=3, row=1, columnspan=2, rowspan=5)
 RT_Label.grid(column=5,row=1,padx=10,pady=10)
 RT_Avg_Temp_Label.grid(column=5,row=2,padx=10,pady=10)
 RT_Avg_Label_Dynamic.grid(column=6,row=2,padx=10,pady=10)
-#RT_Humidity_Label.grid(column=5,row=3,padx=10,pady=10)
-#frame_3.grid(column=5,row=1,rowspan=5)
+RT_Humidity_Label.grid(column=5,row=3,padx=10,pady=10,)
+frame_3.grid(column=5,row=1,rowspan=5, columnspan=2)
 #TV_Label.grid(column=6,row=1,padx=10,pady=10)
 #TV_Avg_Temp_Label.grid(column=6,row=2,padx=10,pady=10)
 #TV_Humidity_Label.grid(column=6,row=3,padx=10,pady=10)
 #frame_4.grid(column=6,row=1,rowspan=5)
-poll()
-Average_temperature()
+#poll()
+#Average_temperature()
 
 root.mainloop()
+
