@@ -10,6 +10,7 @@ from board import SCL,SDA
 import busio
 from adafruit_seesaw.seesaw import Seesaw
 from gpiozero import LED
+from tkinter import messagebox
 
 
 
@@ -25,6 +26,8 @@ Temp1 = None
 Temp2 = None
 Temp3 = None
 Humidity = None
+global TV_Temp_Max
+global TV_Temp_Min
 TV_Temp_Max = 30
 TV_Temp_Min = 25
 TV_Humidity = 0
@@ -63,8 +66,44 @@ def Humidity():
     
 def Update_Temperature_TV():
     Check=1
+    global TV_Temp_Max
+    global TV_Temp_Min
     test = OV_Temp_Max.get()
-    print(OV_Temp_Max.get())
+    test1 = OV_Temp_Min.get()
+    benchmark1= TV_Temp_Min
+    benchmark2 = TV_Temp_Max
+    try:
+        tmp =float(test)
+        if tmp > benchmark1:
+            TV_Temp_Max = tmp
+            TV_Max_Temp.set(tmp)
+        else:
+            ##print('Error')
+            messagebox.showinfo(title = "Error", message = "Selected Max Temperature is greater than Min Temperature!")
+    except:
+        ##print("Max Is not a Number")
+        messagebox.showinfo(title = "Error", message = "Selected Max Temperature is not a number!")
+        
+    try:
+        tmp2 = float(test1)
+        ##print("Min is a number")
+        if tmp2 < benchmark2:
+            TV_Temp_Min = tmp2
+            TV_Min_Temp.set(tmp2)
+        else:
+            ##print('Error')
+            messagebox.showinfo(title = "Error", message = "Selected Min Temperature is greater than Max Temperature!")
+    except:
+        ##print("Min is not a number")
+        messagebox.showinfo(title = "Error", message = "Selected Min Temperature is not a number!")
+  
+
+
+        
+    OV_Temp_Min.delete(0,END)
+    OV_Temp_Max.delete(0,END)
+        
+
     
 
 
@@ -96,6 +135,8 @@ def Average_temperature():
     Tot_Temp = 0
     IsANumber = 0
     Average = 0.0
+    global TV_Temp_Max
+    global TV_Temp_Min
     while Contador < 3:
         if Array_T[Contador] != "Null":
             Tot_Temp = Tot_Temp + Array_T[Contador]
@@ -106,6 +147,12 @@ def Average_temperature():
     Average = Tot_Temp/IsANumber
     strAverage = '{:.2f}'.format(Average)
     AV_Temp.set(strAverage)
+    if Average > TV_Temp_Min and Average < TV_Temp_Max:
+        RL_Channel_Temp.on
+    elif Average > TV_Temp_Max:
+        RL_Channel_Temp.off
+    elif Average < TV_Temp_Min:
+        RL_Channel_Temp.on
     root.after(500,Average_temperature)
 
         
